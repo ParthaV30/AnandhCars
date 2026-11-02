@@ -1,0 +1,285 @@
+// Prisma Schema for Orbenyx Workshop Billing Application
+// This schema implements the database design from the ORBENYX specification
+// SQLite-compatible version (no enums, no JSON)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Users table
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  passwordHash  String
+  role          String    @default("BILLING_STAFF")
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  createdDocuments Document[] @relation("DocumentCreator")
+  recordedPayments Payment[]  @relation("PaymentRecorder")
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+// Customers table
+model Customer {
+  id          String    @id @default(cuid())
+  name        String
+  phone       String?
+  email       String?
+  address     String?
+  stateCode   String?
+  pinCode     String?
+  gstin       String?   @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  vehicles    Vehicle[]
+  documents   Document[]
+
+  @@index([name])
+  @@index([phone])
+  @@index([gstin])
+  @@map("customers")
+}
+
+// Vehicles table
+model Vehicle {
+  id              String    @id @default(cuid())
+  customerId      String
+  registrationNo  String
+  manufacturer    String
+  model           String
+  odometerReading String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  customer        Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  documents       Document[]
+
+  @@unique([registrationNo])
+  @@index([customerId])
+  @@index([manufacturer])
+  @@index([model])
+  @@map("vehicles")
+}
+
+// Parts and Services Catalogue
+model PartsService {
+  id                  String    @id @default(cuid())
+  description         String
+  partNumber          String?
+  hsnSacCode          String?
+  category            String
+  unit                String    @default("NOS")
+  defaultPrice        Int       @default(0) // In paise
+  taxConfiguration    String    @default("CGST_SGST")
+  gstRateBp           Int       @default(1800) // GST rate in basis points (18% = 1800)
+  isActive            Boolean   @default(true)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  // Relations
+  documentItems       DocumentItem[]
+
+  @@index([description])
+  @@index([partNumber])
+  @@index([category])
+  @@index([hsnSacCode])
+  @@map("parts_services")
+}
+
+// Documents table
+model Document {
+  id                String    @id @default(cuid())
+  documentType      String
+  documentNumber    String
+  financialYear     String
+  customerId        String?
+  vehicleId         String?
+  documentDate      DateTime
+  status            String    @default("DRAFT")
+
+  // Financial totals (in paise)
+  taxableTotal      Int       @default(0)
+  taxTotal          Int       @default(0)
+  grandTotal        Int       @default(0)
+  amountPaid        Int       @default(0)
+  balanceDue        Int       @default(0)
+
+  // Template version for PDF reproducibility
+  templateVersion   String    @default("1.0")
+
+  // Timestamps
+  issuedAt          DateTime?
+  createdBy         String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  customer          Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  vehicle           Vehicle?  @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  creator           User      @relation("DocumentCreator", fields: [createdBy], references: [id])
+  items             DocumentItem[]
+  taxLines          DocumentTaxLine[]
+  payments          Payment[]
+  insuranceClaim    InsuranceClaim?
+
+  @@unique([documentType, financialYear, documentNumber])
+  @@index([customerId])
+  @@index([vehicleId])
+  @@index([documentDate])
+  @@index([status])
+  @@index([createdBy])
+  @@map("documents")
+}
+
+// Document Items (line items)
+model DocumentItem {
+  id                      String    @id @default(cuid())
+  documentId              String
+  itemId                  String?   // Reference to catalogue item (nullable for one-off items)
+
+  // Snapshots (preserve values at time of document creation)
+  descriptionSnapshot     String
+  partNumberSnapshot      String?
+  hsnSacSnapshot          String?
+  quantity                Float     @default(1)
+  unitPrice               Int       @default(0) // In paise
+  taxableValue            Int       @default(0) // In paise
+  taxConfigurationSnapshot String
+  gstRateBpSnapshot       Int       @default(1800)
+  taxAmount               Int       @default(0) // In paise
+  lineTotal               Int       @default(0) // In paise
+  sortOrder               Int       @default(0)
+  section                 String?   // For repair estimates: Parts, Labour, Painting, etc.
+
+  // Relations
+  document                Document    @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  item                    PartsService? @relation(fields: [itemId], references: [id], onDelete: SetNull)
+
+  @@index([documentId])
+  @@index([itemId])
+  @@map("document_items")
+}
+
+// Document Tax Lines (for tax summary)
+model DocumentTaxLine {
+  id            String   @id @default(cuid())
+  documentId    String
+  taxType       String   // CGST, SGST, IGST
+  taxRateBp     Int      // Rate in basis points
+  taxableValue  Int      @default(0) // In paise
+  taxAmount     Int      @default(0) // In paise
+
+  // Relations
+  document      Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@map("document_tax_lines")
+}
+
+// Payments table
+model Payment {
+  id              String    @id @default(cuid())
+  documentId      String
+  paymentDate     DateTime
+  amount          Int       // In paise
+  paymentMethod   String
+  referenceNumber String?
+  notes           String?
+  recordedBy      String
+  createdAt       DateTime  @default(now())
+
+  // Relations
+  document        Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  recorder        User      @relation("PaymentRecorder", fields: [recordedBy], references: [id])
+
+  @@index([documentId])
+  @@index([paymentDate])
+  @@map("payments")
+}
+
+// Document Sequences for numbering
+model DocumentSequence {
+  id              String    @id @default(cuid())
+  documentType    String
+  financialYear   String
+  nextNumber      Int       @default(1)
+
+  @@unique([documentType, financialYear])
+  @@map("document_sequences")
+}
+
+// Insurance Claims
+model InsuranceClaim {
+  id                String    @id @default(cuid())
+  documentId        String    @unique
+  policyNumber      String?
+  policyStartDate   DateTime?
+  policyEndDate     DateTime?
+  insuredName       String?
+  accidentDate      DateTime?
+  accidentLocation  String?
+  accidentDescription String?
+  idvAmount         Int?      // In paise
+  estimatedLoss     Int?      // In paise
+  firCsrDetails     String?
+  surveyDetails     String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  document          Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@map("insurance_claims")
+}
+
+// Workshop Settings (singleton)
+model WorkshopSettings {
+  id            String    @id @default("singleton")
+  workshopName  String
+  address       String?
+  phone         String?
+  email         String?
+  gstin         String?
+  stateCode     String?
+  bankDetails   String?   // JSON string for bank details
+  signatureUrl  String?   // Path to signature image
+  logoUrl       String?   // Path to logo image
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("workshop_settings")
+}
+
+// Audit Log for important changes
+model AuditLog {
+  id          String    @id @default(cuid())
+  userId      String?
+  action      String
+  entityType  String
+  entityId    String
+  oldData     String?   // JSON string
+  newData     String?   // JSON string
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
