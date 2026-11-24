@@ -7,7 +7,6 @@ export default async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
   const isLoggedIn = !!token;
   const isOnAuth = req.nextUrl.pathname.startsWith("/auth");
-  const isOnDashboard = req.nextUrl.pathname.startsWith("/dashboard");
 
   // Apply rate limiting to API routes
   const url = new URL(req.url);
@@ -65,7 +64,18 @@ export default async function middleware(req: NextRequest) {
     return applySecurityHeaders(NextResponse.next());
   }
 
-  if (isOnDashboard) {
+  const isProtectedPath = [
+    "/dashboard",
+    "/documents",
+    "/customers",
+    "/vehicles",
+    "/items",
+    "/payments",
+    "/reports",
+    "/settings",
+  ].some((path) => req.nextUrl.pathname.startsWith(path));
+
+  if (isProtectedPath) {
     if (!isLoggedIn) {
       const loginUrl = new URL("/auth/login", req.nextUrl.origin);
       loginUrl.searchParams.set(

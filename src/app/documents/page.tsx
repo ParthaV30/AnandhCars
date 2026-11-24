@@ -11,6 +11,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 import { Plus, Search, FileText, Eye, Download, Printer, Edit, Trash2, Filter, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
 
 const documentTypes = [
@@ -58,6 +59,7 @@ const FY = (() => {
 })();
 
 export default function DocumentsPage() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -263,7 +265,7 @@ export default function DocumentsPage() {
                     onClick={() => {
                       setSelectedType(dt.value);
                       setShowCreateModal(false);
-                      window.location.href = `/documents/new?type=${dt.value}`;
+                      router.push(`/documents/new?type=${dt.value}`);
                     }}
                     className={clsx(
                       "p-4 rounded-xl border-2 transition-all text-left",

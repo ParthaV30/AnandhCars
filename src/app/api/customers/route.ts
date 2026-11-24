@@ -20,10 +20,10 @@ export async function GET(request: Request) {
     const where = search
       ? {
           OR: [
-            { name: { contains: search, mode: "insensitive" } },
+            { name: { contains: search } },
             { phone: { contains: search } },
-            { email: { contains: search, mode: "insensitive" } },
-            { gstin: { contains: search, mode: "insensitive" } },
+            { email: { contains: search } },
+            { gstin: { contains: search } },
           ],
         }
       : {};

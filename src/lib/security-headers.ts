@@ -17,13 +17,19 @@ export function generateNonce(): string {
  * Content Security Policy configuration
  */
 export function getCSPHeader(nonce: string): string {
+  const isDev = process.env.NODE_ENV === 'development';
+
   const directives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
-    `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
-    "img-src 'self' data: https:",
+    isDev
+      ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'"
+      : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    isDev
+      ? "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com"
+      : `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
+    "img-src 'self' data: blob: https:",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self'",
+    isDev ? "connect-src 'self' ws: wss:" : "connect-src 'self'",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

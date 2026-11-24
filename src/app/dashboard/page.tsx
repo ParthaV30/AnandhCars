@@ -84,9 +84,9 @@ const quickActions = [
   { name: "New Repair Estimate", href: "/documents/new?type=REPAIR_ESTIMATE", icon: FileText, variant: "info" },
   { name: "New Insurance Claim", href: "/documents/new?type=INSURANCE_CLAIM", icon: FileText, variant: "warning" },
   { name: "New Simple Estimate", href: "/documents/new?type=SIMPLE_ESTIMATE", icon: FileText, variant: "neutral" },
-  { name: "Add Customer", href: "/customers/new", icon: Users, variant: "primary" },
-  { name: "Add Vehicle", href: "/vehicles/new", icon: Car, variant: "info" },
-  { name: "Record Payment", href: "/payments/new", icon: CreditCard, variant: "success" },
+  { name: "Add Customer", href: "/customers", icon: Users, variant: "primary" },
+  { name: "Add Vehicle", href: "/vehicles", icon: Car, variant: "info" },
+  { name: "Record Payment", href: "/payments", icon: CreditCard, variant: "success" },
 ];
 
 const recentActivity = [
