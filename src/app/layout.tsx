@@ -10,16 +10,16 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Orbenyx Workshop Billing",
-  description: "Automobile Workshop Billing & Management Software",
-  keywords: ["billing", "workshop", "automobile", "invoice", "GST"],
-  authors: [{ name: "Orbenyx" }],
-  creator: "Orbenyx",
-  publisher: "Orbenyx",
+  title: "Smart Car AC Works — Billing System",
+  description: "Smart Car AC Works (Coimbatore) Automobile Workshop Billing & Management Software",
+  keywords: ["billing", "workshop", "smart car", "automobile", "invoice", "GST", "Coimbatore"],
+  authors: [{ name: "Smart Car AC Works" }],
+  creator: "Smart Car AC Works",
+  publisher: "Smart Car AC Works",
   robots: "noindex, nofollow",
   openGraph: {
-    title: "Orbenyx Workshop Billing",
-    description: "Automobile Workshop Billing & Management Software",
+    title: "Smart Car AC Works — Billing System",
+    description: "Smart Car AC Works (Coimbatore) Workshop Billing & Management Software",
     type: "website",
   },
 };

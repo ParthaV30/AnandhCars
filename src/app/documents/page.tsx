@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/Table";
 import { Plus, Search, FileText, Eye, Download, Printer, Edit, Trash2, Filter, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
@@ -65,8 +65,46 @@ export default function DocumentsPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedType, setSelectedType] = useState("TAX_INVOICE");
+  const [documents, setDocuments] = useState(mockDocuments);
 
-  const filteredDocuments = mockDocuments.filter((d) =>
+  useEffect(() => {
+    async function fetchDocs() {
+      try {
+        const res = await fetch("/api/documents");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.data && json.data.length > 0) {
+            interface ApiDoc {
+              id: string;
+              documentType: string;
+              documentNumber: string;
+              customer?: { name: string };
+              vehicle?: { registrationNumber: string };
+              documentDate: string;
+              grandTotal: number;
+              status: string;
+            }
+            const mapped = json.data.map((d: ApiDoc) => ({
+              id: d.id,
+              type: d.documentType,
+              number: d.documentNumber,
+              customer: d.customer?.name || "Customer",
+              vehicle: d.vehicle?.registrationNumber || "—",
+              date: new Date(d.documentDate).toISOString().split("T")[0],
+              amount: d.grandTotal || 0,
+              status: d.status || "DRAFT",
+            }));
+            setDocuments([...mapped, ...mockDocuments.filter((m) => !mapped.some((x: { id: string }) => x.id === m.id))]);
+          }
+        }
+      } catch (err) {
+        console.warn("Could not fetch documents", err);
+      }
+    }
+    fetchDocs();
+  }, []);
+
+  const filteredDocuments = documents.filter((d) =>
     (d.number.toLowerCase().includes(searchQuery.toLowerCase()) ||
       d.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
       d.vehicle.toLowerCase().includes(searchQuery.toLowerCase())) &&

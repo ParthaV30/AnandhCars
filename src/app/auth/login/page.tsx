@@ -53,7 +53,7 @@ function LoginForm() {
           <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
             <Car className="w-7 h-7 text-white" />
           </div>
-          <span className="text-2xl font-bold text-gray-900">Orbenyx</span>
+          <span className="text-2xl font-bold text-gray-900">Smart Car AC Works</span>
         </Link>
         <p className="text-gray-500 mt-2">Workshop Billing & Management</p>
       </div>
@@ -77,7 +77,7 @@ function LoginForm() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@workshop.com"
+              placeholder="smartcaracs@gmail.com"
               required
               autoComplete="email"
               autoFocus
@@ -102,7 +102,7 @@ function LoginForm() {
 
       {/* Footer */}
       <div className="text-center mt-6 text-sm text-gray-500">
-        <p>Orbenyx Workshop Billing v1.0</p>
+        <p>Smart Car AC Works Billing v1.0</p>
       </div>
     </div>
   );

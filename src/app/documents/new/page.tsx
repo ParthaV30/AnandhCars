@@ -170,6 +170,14 @@ function NewDocumentForm() {
       const payload = {
         documentType: docType,
         documentDate: new Date(docDate).toISOString(),
+        customerName: customerName || null,
+        customerPhone: customerPhone || null,
+        customerAddress: customerAddress || null,
+        customerGstin: customerGstin || null,
+        registrationNo: regNo || null,
+        vehicleMake: make || null,
+        vehicleModel: model || null,
+        vehicleKms: kms || null,
         items: items.map((i) => ({
           description: i.description,
           partNumber: i.partNumber || null,

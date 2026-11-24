@@ -98,6 +98,50 @@ export async function POST(request: Request) {
     // Get the next document number
     const { documentNumber, fullNumber } = await getNextDocumentNumber(data.documentType);
 
+    // Resolve or auto-create customer if name provided
+    let finalCustomerId = data.customerId || null;
+    if (!finalCustomerId && data.customerName?.trim()) {
+      const existingCustomer = await prisma.customer.findFirst({
+        where: { name: data.customerName.trim() },
+      });
+      if (existingCustomer) {
+        finalCustomerId = existingCustomer.id;
+      } else {
+        const newCust = await prisma.customer.create({
+          data: {
+            name: data.customerName.trim(),
+            phone: data.customerPhone || "0000000000",
+            address: data.customerAddress || null,
+            gstin: data.customerGstin || null,
+          },
+        });
+        finalCustomerId = newCust.id;
+      }
+    }
+
+    // Resolve or auto-create vehicle if regNo provided
+    let finalVehicleId = data.vehicleId || null;
+    if (!finalVehicleId && data.registrationNo?.trim()) {
+      const normReg = data.registrationNo.trim().toUpperCase();
+      const existingVehicle = await prisma.vehicle.findFirst({
+        where: { registrationNo: normReg },
+      });
+      if (existingVehicle) {
+        finalVehicleId = existingVehicle.id;
+      } else if (finalCustomerId) {
+        const newVeh = await prisma.vehicle.create({
+          data: {
+            registrationNo: normReg,
+            customerId: finalCustomerId,
+            manufacturer: data.vehicleMake || "CAR",
+            model: data.vehicleModel || "GENERIC",
+            odometerReading: data.vehicleKms || null,
+          },
+        });
+        finalVehicleId = newVeh.id;
+      }
+    }
+
     // Calculate financials based on document type
     let taxableTotal = 0;
     let taxTotal = 0;
@@ -166,8 +210,8 @@ export async function POST(request: Request) {
         documentType: data.documentType,
         documentNumber,
         financialYear: getCurrentFinancialYear(),
-        customerId: data.customerId || null,
-        vehicleId: data.vehicleId || null,
+        customerId: finalCustomerId,
+        vehicleId: finalVehicleId,
         documentDate: new Date(data.documentDate),
         status: "DRAFT",
         taxableTotal,

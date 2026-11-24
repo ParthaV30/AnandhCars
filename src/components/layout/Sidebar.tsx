@@ -50,7 +50,7 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
               <Car className="w-5 h-5 text-white" />
             </div>
             {!collapsed && (
-              <span className="font-bold text-xl text-[var(--text-primary)]">Orbenyx</span>
+              <span className="font-bold text-lg text-[var(--text-primary)] tracking-tight">Smart Car AC Works</span>
             )}
           </Link>
         </div>
@@ -85,7 +85,7 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
           {!collapsed && (
             <div className="px-3 pb-2">
               <p className="text-xs text-[var(--text-muted)] text-center">
-                Orbenyx Workshop Billing v1.0
+                Smart Car AC Works Billing v1.0
               </p>
             </div>
           )}

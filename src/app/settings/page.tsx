@@ -23,18 +23,18 @@ const tabs = [
 ];
 
 const defaultWorkshop = {
-  name: "Orbenyx Auto Workshop",
-  address: "123 Workshop Street, Industrial Area, Chennai - 600001, Tamil Nadu",
-  phone: "044-23456789",
-  email: "info@orbenyx.com",
-  gstin: "33AAACO1234B1Z5",
+  name: "SMART CAR AC WORKS",
+  address: "No.: 88, K.R.N Complex, Nehru Nagar, 2nd Bus Stop, Kalapatti Road, Coimbatore - 641 014.",
+  phone: "98944 88847",
+  email: "smartcaracs@gmail.com",
+  gstin: "33ANLPN0999B1ZX",
   stateCode: "33",
   bankDetails: {
-    bankName: "State Bank of India",
-    accountName: "Orbenyx Auto Workshop",
-    accountNumber: "12345678901",
-    ifscCode: "SBIN0001234",
-    branch: "Chennai Industrial Branch",
+    bankName: "KARUR VYSYA BANK",
+    accountName: "SMART CAR AC WORKS",
+    accountNumber: "1662135000004834",
+    ifscCode: "KVBL0001662",
+    branch: "NEHRU NAGAR",
   },
 };
 
@@ -168,7 +168,7 @@ export default function SettingsPage() {
                       label="Account Name"
                       value={workshop.bankDetails.accountName}
                       onChange={(e) => setWorkshop({ ...workshop, bankDetails: { ...workshop.bankDetails, accountName: e.target.value } })}
-                      placeholder="Orbenyx Auto Workshop"
+                      placeholder="SMART CAR AC WORKS"
                       leftIcon={<User className="w-5 h-5" />}
                     />
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

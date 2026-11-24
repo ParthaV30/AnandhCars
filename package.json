@@ -1,5 +1,5 @@
 {
-  "name": "orbenyx-workshop-billing",
+  "name": "smart-car-billing",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -54,6 +54,7 @@
     "tailwindcss": "^4.0.0",
     "tsx": "^4.19.2",
     "typescript": "^5",
+    "vite": "^8.3.8",
     "vitest": "^5.0.5"
   }
 }

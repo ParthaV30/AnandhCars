@@ -4,7 +4,7 @@ import { compare } from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function check() {
-  const user = await prisma.user.findUnique({ where: { email: "admin@orbenyx.com" } });
+  const user = await prisma.user.findFirst({ where: { email: { in: ["smartcaracs@gmail.com", "admin@smartcar.com", "admin@orbenyx.com"] } } });
   console.log("User found:", user ? "YES" : "NO");
   if (user) {
     console.log("Email:", user.email);

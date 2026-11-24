@@ -279,16 +279,14 @@ export default function DocumentViewPage({
                   {doc.workshopSettings?.workshopName || "SMART CAR AC WORKS"}
                 </h2>
                 <p className="text-xs text-neutral-600 mt-1 max-w-md">
-                  {doc.workshopSettings?.address || "No. 12, Kalapatti Main Road, Sitra, Coimbatore - 641014"}
+                  {doc.workshopSettings?.address || "No.: 88, K.R.N Complex, Nehru Nagar, 2nd Bus Stop, Kalapatti Road, Coimbatore - 641 014."}
                 </p>
                 <p className="text-xs text-neutral-600">
-                  Phone: {doc.workshopSettings?.phone || "98422 12345"} | Email: {doc.workshopSettings?.email || "smartcaracworks@gmail.com"}
+                  Phone: {doc.workshopSettings?.phone || "98944 88847"} | Email: {doc.workshopSettings?.email || "smartcaracs@gmail.com"}
                 </p>
-                {doc.workshopSettings?.gstin && (
-                  <p className="text-xs font-bold text-neutral-800 mt-0.5">
-                    GSTIN: {doc.workshopSettings.gstin}
-                  </p>
-                )}
+                <p className="text-xs font-bold text-neutral-800 mt-0.5">
+                  GSTIN: {doc.workshopSettings?.gstin || "33ANLPN0999B1ZX"} | State: Tamil Nadu (33)
+                </p>
               </div>
               <div className="text-right">
                 <div className="inline-block px-3 py-1 bg-neutral-100 border border-neutral-300 font-bold text-sm tracking-wider uppercase">
@@ -447,6 +445,28 @@ export default function DocumentViewPage({
                 </>
               )}
             </div>
+          </div>
+
+          {/* Bank Details Block */}
+          <div className="border border-neutral-300 rounded p-3 my-4 text-xs bg-neutral-50/50">
+            <p className="font-bold text-neutral-800 uppercase tracking-wider text-[11px] mb-1">
+              Bank Details & Payment Information:
+            </p>
+            {doc.documentType === "LABOUR_BILL" ? (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-neutral-700">
+                <div><span className="font-semibold">Bank:</span> CANARA BANK</div>
+                <div><span className="font-semibold">A/C No.:</span> 2988201002428</div>
+                <div><span className="font-semibold">IFSC:</span> CNRB0002988</div>
+                <div><span className="font-semibold text-emerald-700 font-bold">G-Pay:</span> 98944 88847</div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-neutral-700">
+                <div><span className="font-semibold">Bank:</span> KARUR VYSYA BANK</div>
+                <div><span className="font-semibold">A/C No.:</span> 1662135000004834</div>
+                <div><span className="font-semibold">IFSC:</span> KVBL0001662</div>
+                <div><span className="font-semibold">Branch:</span> NEHRU NAGAR</div>
+              </div>
+            )}
           </div>
 
           {/* Signatures */}

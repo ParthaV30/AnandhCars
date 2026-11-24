@@ -474,18 +474,18 @@ function getBaseStyles(): string {
 
 function getDefaultSettings() {
   return {
-    workshopName: "ORBENYX WORKSHOP",
-    address: "Workshop Address",
-    phone: "1234567890",
-    email: "info@orbenyx.com",
-    gstin: "33AAAAA0000A1Z5",
+    workshopName: "SMART CAR AC WORKS",
+    address: "No.: 88, K.R.N Complex, Nehru Nagar, 2nd Bus Stop, Kalapatti Road, Coimbatore - 641 014.",
+    phone: "98944 88847",
+    email: "smartcaracs@gmail.com",
+    gstin: "33ANLPN0999B1ZX",
     stateCode: "33",
     bankDetails: {
-      bankName: "Bank Name",
-      accountName: "Account Name",
-      accountNumber: "0000000000",
-      ifscCode: "BANK0000000",
-      branch: "Branch Name",
+      bankName: "KARUR VYSYA BANK",
+      accountName: "SMART CAR AC WORKS",
+      accountNumber: "1662135000004834",
+      ifscCode: "KVBL0001662",
+      branch: "NEHRU NAGAR",
     },
     signatureUrl: "",
     logoUrl: "",
